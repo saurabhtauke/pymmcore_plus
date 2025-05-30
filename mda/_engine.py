@@ -140,8 +140,10 @@ class MDAEngine(PMDAEngine):
         # get if the autofocus is engaged at the start of the sequence
         self._af_was_engaged = self._mmc.isContinuousFocusLocked()
 
-        if px_size := self._mmc.getPixelSizeUm():
-            self._update_grid_fov_sizes(px_size, sequence)
+        # if px_size := self._mmc.getPixelSizeUm():
+        px_size = 0.108 # for cosmos
+        self._update_grid_fov_sizes(px_size, sequence)
+        print('DEBUG_SIZE PIXEL', px_size)
 
         self._autoshutter_was_set = self._mmc.getAutoShutter()
         return self.get_summary_metadata(mda_sequence=sequence)

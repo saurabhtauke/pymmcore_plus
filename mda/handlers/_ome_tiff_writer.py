@@ -112,7 +112,7 @@ class OMETiffWriter(_5DWriterBase[np.memmap]):
         dims, shape = zip(*sizes.items())
 
         metadata: dict[str, Any] = self._sequence_metadata()
-        metadata["axes"] = "".join(dims).upper()
+        metadata["axes"] = "".join(dims).upper().replace('G','P')
 
         # append the position key to the filename if there are multiple positions
         if (seq := self.current_sequence) and seq.sizes.get("p", 1) > 1:

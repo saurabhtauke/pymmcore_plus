@@ -224,6 +224,9 @@ class MDARunner:
         """
         error = None
         sequence = events if isinstance(events, MDASequence) else GeneratorMDASequence()
+        x,y = sequence.stage_positions[0].x , sequence.stage_positions[0].y 
+        print('x:', x)
+        print('y:', y)
         with self._outputs_connected(output):
             # NOTE: it's important that `_prepare_to_run` and `_finish_run` are
             # called inside the context manager, since the `mda_listeners_connected`
@@ -234,6 +237,7 @@ class MDARunner:
             except Exception as e:
                 error = e
             with exceptions_logged():
+                self.gobackhome(engine, x, y)
                 self._finish_run(sequence)
         if error is not None:
             raise error
@@ -334,11 +338,12 @@ class MDARunner:
                 break
 
             self._signals.eventStarted.emit(event)
-            logger.info("%s", event)
+            logger.info("%s", event)  # noqa: E501
             engine.setup_event(event)
 
             try:
                 runner_time_ms = self.seconds_elapsed() * 1000
+                print(f"ellapsed time: {runner_time_ms:.2f} ms")
                 # this is a bit of a hack to pass the time into the engine
                 # it is used for intra-event time calculations inside the engine.
                 # we pop it off after the event is executed.
@@ -445,6 +450,14 @@ class MDARunner:
         # check canceled again in case it was canceled
         # during the waiting loop
         return self._check_canceled()
+
+    def gobackhome(self, engine, x, y):
+            from useq import MDAEvent
+            event = MDAEvent(x_pos=x, y_pos=y)
+            engine._set_event_position(event)
+            logger.info("Moving to home position %s")
+            logger.info("%s", event)
+            
 
     def _finish_run(self, sequence: MDASequence) -> None:
         """To be called at the end of an acquisition.
