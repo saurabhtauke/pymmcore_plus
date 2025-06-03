@@ -162,4 +162,4 @@ def exceptions_logged() -> Iterator[None]:
         logger.error(e)
 
 
-configure_logging()
+configure_logging('cosmos_logger.txt')
