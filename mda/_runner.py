@@ -339,6 +339,7 @@ class MDARunner:
 
             self._signals.eventStarted.emit(event)
             logger.info("%s", event)  # noqa: E501
+            logger.info("execution_time: %s", self.seconds_elapsed())
             engine.setup_event(event)
 
             try:
@@ -454,7 +455,7 @@ class MDARunner:
     def gobackhome(self, engine, x, y):
             from useq import MDAEvent
             event = MDAEvent(x_pos=x, y_pos=y)
-            engine._set_event_position(event)
+            engine._set_event_xy_position(event) # changed from `set_event_position`
             logger.info("Moving to home position %s")
             logger.info("%s", event)
             
